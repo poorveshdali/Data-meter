@@ -31,38 +31,107 @@
 
     main {
       flex: 1;
-      min-height: 0;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      padding: 0 12px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 12px;
     }
 
-    section {
-      min-height: 0;
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .options button {
+      padding: 10px 16px;
+      border: 1px solid #888;
+      border-radius: 6px;
+      background: #f5f5f5;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .options button[aria-pressed="true"] {
+      color: #fff;
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+    }
+
+    #viewer[hidden] {
+      display: none;
+    }
+
+    #viewer {
+      flex: 1;
+      min-height: 70vh;
       display: flex;
       flex-direction: column;
       border: 1px solid #ccc;
     }
 
-    h2 {
+    #viewer h2 {
       margin: 0;
       padding: 8px;
       font-size: 1rem;
     }
 
-    iframe {
+    #document-frame {
       flex: 1;
       width: 100%;
       min-height: 0;
       border: 0;
     }
 
-    @media (max-width: 700px) {
-      main {
-        grid-template-columns: 1fr;
-        grid-template-rows: repeat(2, minmax(60vh, 1fr));
-      }
+    #document-frame[hidden],
+    #slide-viewer[hidden] {
+      display: none;
+    }
+
+    #slide-viewer {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      background: #061a32;
+    }
+
+    .slide-stage {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+    }
+
+    #slide-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .slide-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 12px;
+      color: #fff;
+    }
+
+    .slide-controls button {
+      padding: 8px 12px;
+      border: 1px solid #fff;
+      border-radius: 6px;
+      color: inherit;
+      background: transparent;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .slide-controls button:disabled {
+      opacity: 0.5;
+      cursor: default;
     }
   </style>
 </head>
@@ -72,14 +141,75 @@
     <h1>Assignment 1</h1>
   </header>
   <main>
-    <section>
-      <h2><a href="hospital-gas-monitor.html" target="_blank" rel="noopener">Hospital Gas Monitor</a></h2>
-      <iframe src="hospital-gas-monitor.html" title="Hospital Gas Monitor"></iframe>
-    </section>
-    <section>
-      <h2><a href="Thorpe%20tube.pdf" target="_blank" rel="noopener">Thorpe tube PDF</a></h2>
-      <iframe src="Thorpe%20tube.pdf" title="Thorpe tube PDF"></iframe>
+    <div class="options" aria-label="Assignment 1 options">
+      <button type="button" data-document="Thorpe%20tube.pdf" data-title="Documentation" aria-pressed="false">Documentation</button>
+      <button type="button" data-document="hospital-gas-monitor.html" data-title="Prototype" aria-pressed="false">Prototype</button>
+    </div>
+    <section id="viewer" aria-live="polite" hidden>
+      <h2 id="viewer-title"></h2>
+      <div id="slide-viewer" hidden>
+        <div class="slide-stage">
+          <img id="slide-image" alt="">
+        </div>
+        <nav class="slide-controls" aria-label="Documentation slides">
+          <button id="previous-slide" type="button">Previous</button>
+          <span id="slide-count" aria-live="polite"></span>
+          <button id="next-slide" type="button">Next</button>
+        </nav>
+      </div>
+      <iframe id="document-frame" title="Assignment document" hidden></iframe>
     </section>
   </main>
+  <script>
+    const viewer = document.querySelector("#viewer");
+    const viewerTitle = document.querySelector("#viewer-title");
+    const documentFrame = document.querySelector("#document-frame");
+    const slideViewer = document.querySelector("#slide-viewer");
+    const slideImage = document.querySelector("#slide-image");
+    const slideCount = document.querySelector("#slide-count");
+    const previousSlide = document.querySelector("#previous-slide");
+    const nextSlide = document.querySelector("#next-slide");
+    const optionButtons = document.querySelectorAll(".options button");
+    const totalSlides = 6;
+    let currentSlide = 1;
+
+    function showSlide(slide) {
+      currentSlide = slide;
+      slideImage.src = `slides/slide-${currentSlide}.png`;
+      slideImage.alt = `Documentation slide ${currentSlide} of ${totalSlides}`;
+      slideCount.textContent = `Slide ${currentSlide} of ${totalSlides}`;
+      previousSlide.disabled = currentSlide === 1;
+      nextSlide.disabled = currentSlide === totalSlides;
+    }
+
+    previousSlide.addEventListener("click", () => showSlide(currentSlide - 1));
+    nextSlide.addEventListener("click", () => showSlide(currentSlide + 1));
+
+    optionButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const title = button.dataset.title;
+        const documentPath = button.dataset.document;
+
+        if (!title || !documentPath) {
+          return;
+        }
+
+        viewerTitle.textContent = title;
+        const isDocumentation = title === "Documentation";
+        slideViewer.hidden = !isDocumentation;
+        documentFrame.hidden = isDocumentation;
+        if (isDocumentation) {
+          showSlide(1);
+        } else {
+          documentFrame.src = documentPath;
+          documentFrame.title = title;
+        }
+        viewer.hidden = false;
+        optionButtons.forEach((option) => {
+          option.setAttribute("aria-pressed", String(option === button));
+        });
+      });
+    });
+  </script>
 </body>
 </html>
