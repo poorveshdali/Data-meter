@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment 1 | Data Meter</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    main {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 0 12px 12px;
+    }
+
+    section {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #ccc;
+    }
+
+    h2 {
+      margin: 0;
+      padding: 8px;
+      font-size: 1rem;
+    }
+
+    iframe {
+      flex: 1;
+      width: 100%;
+      min-height: 0;
+      border: 0;
+    }
+
+    @media (max-width: 700px) {
+      main {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(2, minmax(60vh, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">Back</a>
+    <h1>Assignment 1</h1>
+  </header>
+  <main>
+    <section>
+      <h2><a href="hospital-gas-monitor.html" target="_blank" rel="noopener">Hospital Gas Monitor</a></h2>
+      <iframe src="hospital-gas-monitor.html" title="Hospital Gas Monitor"></iframe>
+    </section>
+    <section>
+      <h2><a href="Thorpe%20tube.pdf" target="_blank" rel="noopener">Thorpe tube PDF</a></h2>
+      <iframe src="Thorpe%20tube.pdf" title="Thorpe tube PDF"></iframe>
+    </section>
+  </main>
+</body>
+</html>
